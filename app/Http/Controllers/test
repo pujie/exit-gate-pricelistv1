@@ -1,0 +1,109 @@
+// Route untuk menampilkan halaman (kerangka)
+Route::get('/pricelist', [ProductController::class, 'index'])->name('pricelist.index');
+
+// Route untuk mengambil data JSON (dipanggil oleh AJAX DataTables)
+Route::get('/api/products', [ProductController::class, 'getProductsJson'])->name('api.products');
+
+//2
+
+// app/Http/Controllers/ProductController.php
+
+public function index() {
+    return view('pricelist.index'); // Hanya memunculkan halaman kosong/layout
+}
+
+public function getProductsJson() {
+    // 1. Ambil data dari Odoo (Gunakan logic session_id yang kita bahas tadi)
+    $response = Http::get('https://odoo.padi.net.id/api/products');
+    $odooProducts = $response->json()['result'] ?? [];
+
+    // 2. Ambil diskon lokal
+    $localDiscounts = Discount::all()->keyBy('odoo_product_id');
+
+    // 3. Format data untuk DataTables
+    $data = collect($odooProducts)->map(function($product) use ($localDiscounts) {
+        $discount = $localDiscounts->get($product['id']);
+        $basePrice = $product['price'];
+        
+        // Hitung harga akhir
+        $finalPrice = $basePrice;
+        if ($discount) {
+            $finalPrice = ($discount->type == 'percentage') 
+                ? $basePrice - ($basePrice * ($discount->amount / 100)) 
+                : $basePrice - $discount->amount;
+        }
+
+        return [
+            'code' => $product['code'],
+            'name' => $product['name'],
+            'price' => "Rp " . number_format($basePrice, 0, ',', '.'),
+            'final_price' => "Rp " . number_format($finalPrice, 0, ',', '.'),
+            'status' => $discount ? '<span class="badge badge-success">Promo</span>' : '-',
+            'action' => '<button class="btn btn-sm btn-primary">Detail</button>'
+        ];
+    });
+
+    return response()->json(['data' => $data]);
+}
+
+
+
+
+
+{
+  "data": [
+    "HTTP/1.0 200 OK\r\nCache-Control: no-cache",
+    " private Content-Type:  application/json\r\nDate:  Wed",
+    " 25 Mar 2026 09:30:21 GMT\r\n\r\n{
+        "data":"{"count": 2046",
+        "prev": null",
+        "current": 1",
+        "next": null",
+        "total_pages": 1",
+        "result": [
+            {
+                "id": 14895",
+                "code": "013ADP-00A"",
+                "name": "Adaptor 5V - 0.7A"",
+                "price": 0.0}",
+            {
+                "id": 14896",
+                "code": "013ADP-00B"",
+                "name": "Adaptor 12V - 0.5A",
+                "price": 0.0}
+                ]
+            }
+        }
+    ]
+}
+
+
+
+INI  
+
+
+'{
+  "data": [
+    {
+        "count": 2046",
+        "prev": null",
+        "current": 1",
+        "next": null",
+        "total_pages": 1",
+        "result": [
+            {
+                "id": 14895",
+                "code": "013ADP-00A"",
+                "name": "Adaptor 5V - 0.7A"",
+                "price": 0.0
+            },
+            {
+                "id": 14896",
+                "code": "013ADP-00B"",
+                "name": "Adaptor 12V - 0.5A"",
+                "price": 0.0
+            }
+        ]
+    }
+    ]
+}'

@@ -1,0 +1,47 @@
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow-sm">
+                <div class="card-body p-4 text-center">
+                    <h4 class="mb-3">Verifikasi Dua Faktor</h4>
+                    <p class="text-muted">
+                        Kami telah mengirimkan 6 digit kode OTP ke email: <br>
+                        <strong>{{ auth()->user()->email }}</strong>
+                    </p>
+
+                    @if($errors->any())
+                        <div class="alert alert-danger">
+                            {{ $errors->first() }}
+                        </div>
+                    @endif
+
+                    <form method="POST" action="{{ route('verify.store') }}">
+                        @csrf
+                        <div class="form-group mb-4">
+                            <input type="text" 
+                                   name="two_factor_code" 
+                                   class="form-control form-control-lg text-center font-weight-bold" 
+                                   placeholder="000000" 
+                                   maxlength="6" 
+                                   pattern="\d*" 
+                                   inputmode="numeric"
+                                   style="letter-spacing: 10px; font-size: 2rem;"
+                                   required 
+                                   autofocus>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-lg btn-block">
+                            Verifikasi Sekarang
+                        </button>
+                    </form>
+
+                    <hr>
+                    <p class="small text-muted">
+                        Tidak menerima email? <br>
+                        <a href="{{ route('login') }}">Coba login kembali</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
