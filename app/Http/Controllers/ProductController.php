@@ -124,4 +124,10 @@ class ProductController extends Controller
     public function show(){
         return view('products.index');
     }
+    public function dashboard(){
+        echo "test dashboard";
+    }
+    public function edit(ProductController $product){
+        return view('products.edit', compact('product'));
+    }
 }

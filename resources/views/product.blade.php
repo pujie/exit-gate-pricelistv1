@@ -56,13 +56,6 @@
                             columns: [ 0, 1, 2 ]
                         },
                     },
-                    {
-                        text: '<i class="fa-solid fa-ticket"></i> Unggah Spreadsheet',
-                        className:'btn btn-success ',
-                        action: function ( e, tObj, node, config ) {
-                            $('#fileInput').click()
-                        }
-                    },
                 ],
 
             });

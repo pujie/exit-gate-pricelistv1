@@ -1,0 +1,40 @@
+// 1. GUEST ROUTES (Bisa diakses tanpa login)
+Route::get('/', function () { return view('welcome'); });
+
+// 2. AUTH ROUTES (Sudah login tapi mungkin belum 2FA)
+Route::middleware(['auth'])->group(function () {
+    
+    // Halaman Verifikasi OTP (2FA)
+    Route::get('/verify-2fa', [AuthController::class, 'showVerifyForm'])->name('2fa.index');
+    Route::post('/verify-2fa', [AuthController::class, 'verifyOtp'])->name('2fa.verify');
+    Route::post('/resend-2fa', [AuthController::class, 'resendOtp'])->name('2fa.resend');
+
+    // 3. PROTECTED ROUTES (Sudah Login & Lolos 2FA)
+    Route::middleware(['2fa_verified'])->group(function () {
+        
+        Route::get('/dashboard', [ProductController::class, 'dashboard'])->name('dashboard');
+
+        // --- ROLE: MANAGER & SALES ---
+        Route::middleware(['role:manager,sales'])->group(function () {
+            Route::get('/pricelist', [ProductController::class, 'index'])->name('pricelist.index');
+            Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.detail');
+        });
+
+        // --- ROLE: KHUSUS MANAGER ---
+        Route::middleware(['role:manager'])->group(function () {
+            Route::get('/discounts', [DiscountController::class, 'index'])->name('discounts.index');
+            Route::get('/discounts/create', [DiscountController::class, 'create'])->name('discounts.create');
+            Route::post('/discounts/store', [DiscountController::class, 'store'])->name('discounts.store');
+            Route::delete('/discounts/{id}', [DiscountController::class, 'destroy'])->name('discounts.delete');
+        });
+
+        // --- ROLE: BUSINESS SOLUTION ---
+        Route::middleware(['role:biz_sol'])->group(function () {
+            Route::get('/report', [ProductController::class, 'report'])->name('report.index');
+        });
+
+    });
+});
+
+// Route otomatis dari Laravel Breeze (Login, Register, Logout)
+require __DIR__.'/auth.php';
