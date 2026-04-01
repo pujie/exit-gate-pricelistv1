@@ -4,7 +4,19 @@
             {{ __('Dashboard') }}
         </h2>
     </x-slot>
-
+<!-- start tombol install -->
+<div id="install-container" style="display: none;" class="mb-4">
+    <div class="p-4 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg shadow-sm flex justify-between items-center">
+        <div>
+            <p class="text-sm text-blue-700 font-bold">Aplikasi Tersedia!</p>
+            <p class="text-xs text-blue-600">Pasang di HP untuk akses daftar harga lebih cepat.</p>
+        </div>
+        <button id="btn-install" class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:bg-blue-700 active:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
+            Install Sekarang
+        </button>
+    </div>
+</div>
+<!-- end tombol install -->
     <!-- start dari Puji -->
     <div class="relative sm:flex sm:justify-center sm:items-center min-h-screen bg-dots-darker bg-center bg-gray-100 dark:bg-dots-lighter dark:bg-gray-900 selection:bg-red-500 selection:text-white">
             @if (Route::has('login'))
@@ -113,5 +125,44 @@
                 </div>
             </div>
         </div>
+
+        <script>
+            let deferredPrompt;
+            const installContainer = document.getElementById('install-container');
+            const btnInstall = document.getElementById('btn-install');
+
+            // 1. Tangkap event 'beforeinstallprompt'
+            window.addEventListener('beforeinstallprompt', (e) => {
+                // Cegah browser menampilkan prompt otomatis
+                e.preventDefault();
+                // Simpan event agar bisa dipicu nanti
+                deferredPrompt = e;
+                // Munculkan container tombol kita
+                installContainer.style.display = 'block';
+            });
+
+            // 2. Logika ketika tombol diklik
+            btnInstall.addEventListener('click', async () => {
+                if (deferredPrompt) {
+                    // Tampilkan prompt instalasi resmi browser
+                    deferredPrompt.prompt();
+                    
+                    // Tunggu jawaban user (Accepted/Dismissed)
+                    const { outcome } = await deferredPrompt.userChoice;
+                    console.log(`User response to the install prompt: ${outcome}`);
+                    
+                    // Sembunyikan tombol setelah user memilih
+                    deferredPrompt = null;
+                    installContainer.style.display = 'none';
+                }
+            });
+
+            // 3. Sembunyikan tombol jika aplikasi sudah terinstal
+            window.addEventListener('appinstalled', () => {
+                installContainer.style.display = 'none';
+                deferredPrompt = null;
+                console.log('PWA telah terpasang!');
+            });
+        </script>
     <!-- end dari Puji -->
 </x-app-layout>

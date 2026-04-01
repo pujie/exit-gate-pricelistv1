@@ -1,10 +1,10 @@
 {
-    "name": "Laravel Package Tutorial",
-    "short_name": "LPT",
-    "start_url": "/index.php",
+    "name": "PriceList PadiTech",
+    "short_name": "PLPT",
+    "start_url": "/",
     "background_color": "#6777ef",
-    "description": "Tutorial of Laravel Package",
-    "display": "fullscreen",
+    "description": "Daftar Harga",
+    "display": "standalone",
     "theme_color": "#6777ef",
     "icons": [
         {
