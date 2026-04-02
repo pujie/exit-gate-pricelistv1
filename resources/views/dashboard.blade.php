@@ -64,7 +64,7 @@
                                     </svg>
                                 </div>
 
-                                <h2 class="mt-6 text-xl font-semibold text-gray-900 dark:text-white">Produk di DB Lokal</h2>
+                                <h2 class="mt-6 text-xl font-semibold text-gray-900 dark:text-white">Pricelist</h2>
 
                                 <p class="mt-4 text-gray-500 dark:text-gray-400 text-sm leading-relaxed">
                                     Produk-produk yang tersimpan di database lokal.
@@ -84,10 +84,10 @@
                                     </svg>
                                 </div>
 
-                                <h2 class="mt-6 text-xl font-semibold text-gray-900 dark:text-white">Diskon</h2>
+                                <h2 class="mt-6 text-xl font-semibold text-gray-900 dark:text-white">Promo</h2>
 
                                 <p class="mt-4 text-gray-500 dark:text-gray-400 text-sm leading-relaxed">
-                                    Halaman Diskon.
+                                    Halaman Promo.
                                 </p>
                             </div>
 
