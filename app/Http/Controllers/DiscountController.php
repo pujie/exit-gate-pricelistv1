@@ -26,11 +26,11 @@ class DiscountController extends Controller
     public function create()
     {
         // Kita ambil daftar produk dari Odoo untuk dipilih di dropdown
-        $products = DB::connection('pgsql_odoo')
-            ->table('product_product')
-            ->join('product_template', 'product_product.product_tmpl_id', '=', 'product_template.id')
-            ->select('product_product.id', 'product_template.name', 'product_product.default_code')
-            ->where('product_template.active', true)
+        $products = DB::connection('pgsql')
+            ->table('products')
+        //    ->join('product_template', 'product_product.product_tmpl_id', '=', 'product_template.id')
+        //    ->select('product_product.id', 'product_template.name', 'product_product.default_code')
+        //    ->where('product_template.active', true)
             ->get();
 
         return view('discounts.create', compact('products'));
@@ -41,9 +41,13 @@ class DiscountController extends Controller
      */
     public function store(Request $request)
     {
+        dd($request);
         // 1. VALIDASI (Di CI3 biasanya pakai $this->form_validation)
         $request->validate([
-            'odoo_product_id' => 'required',
+            //'odoo_product_id' => 'required',
+            //'product_id' => 'required',
+            //'discount_id' => 'required',
+            'name'=>'required',
             'type'            => 'required|in:value,percentage',
             'amount'          => 'required|numeric',
             'start_date'      => 'required|date',
@@ -61,7 +65,10 @@ class DiscountController extends Controller
 
         // 3. SIMPAN DATA (Eloquent ORM)
         Discount::create([
-            'odoo_product_id' => $request->odoo_product_id,
+            //'odoo_product_id' => $request->odoo_product_id,
+            //'product_id' => $request->product_id,
+            //'discount_id' => $request->discount_id,
+            'name' => $request->name,
             'type'            => $request->type,
             'amount'          => $request->amount,
             'start_date'      => $request->start_date,
